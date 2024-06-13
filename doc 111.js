@@ -1,47 +1,40 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.18;
+
 /*
-Assessment Requirements
-1. Create a variable that can hold a number of NFT's. What type of variable might this be?
-2. Create an object inside your mintNFT function that will hold the metadata for your NFTs. 
-   The metadata values will be passed to the function as parameters. When the NFT is ready, 
-   you will store it in the variable you created in step 1
-3. Your listNFTs() function will print all of your NFTs metadata to the console (i.e. console.log("Name: " + someNFT.name))
-4. For good measure, getTotalSupply() should return the number of NFT's you have created
+       REQUIREMENTS
+    1. Your contract will have public variables that store the details about your coin (Token Name, Token Abbrv., Total Supply)
+    2. Your contract will have a mapping of addresses to balances (address => uint)
+    3. You will have a mint function that takes two parameters: an address and a value. 
+       The function then increases the total supply by that number and increases the balance 
+       of the “sender” address by that amount
+    4. Your contract will have a burn function, which works the opposite of the mint function, as it will destroy tokens. 
+       It will take an address and value just like the mint functions. It will then deduct the value from the total supply 
+       and from the balance of the “sender”.
+    5. Lastly, your burn function should have conditionals to make sure the balance of "sender" is greater than or equal 
+       to the amount that is supposed to be burned.
 */
 
-// create a variable to hold your NFT's
-let nftCollection = [];
-// this function will take in some values as parameters, create an
-// NFT object using the parameters passed to it for its metadata, 
-// and store it in the variable above.
-function mintNFT (id, name, eyeColor, country , state) {
-    let newNFT ={
-        id: id,
-        name: name,
-        eyeColor: eyeColor,
-        country: country,
-        state: state,
+contract MyToken {
+
+    // public variables here
+    string public Tname = "META_COIN";
+    string public Tabbr= "MYCOIN";
+    uint public supply = 1;
+    // mapping variable here
+    mapping(address => uint) public AddrToBal;
+    
+    // mint function
+    function mint (address addr, uint value) public  {
+        supply+= value;
+        AddrToBal[addr] += value;
     }
-    nftCollection.push(newNFT);
-}
-
-// create a "loop" that will go through an "array" of NFT's
-// and print their metadata with console.log()
-function listNFTs () {
-    for(let m = 0; m < nftCollection.length; m++){
-        let nft = nftCollection[m];
-        console.log("NFT ID: " + nft.id + " ,Name:" + nft.name + " ,Eye Color:" + nft.eyeColor + " ,Country:" + nft.country + " ,State:" + nft.state) ;
+    // burn function
+    function burn (address addr , uint value) public {
+        if(AddrToBal[addr] >= value){
+            supply-= value;
+            AddrToBal[addr] -= value;
+        }
+       
     }
 }
-
-// print the total number of NFTs we have minted to the console
-function getTotalSupply() {
-    console.log("Total no of NFT: " + nftCollection.length);
-}
-
-mintNFT(1, "Lakshyaraj", "Black", "india", "rajasthan")
-mintNFT(2, "Amit", "hazel", "india", "punjab")
-
-
-// call your functions below this line
-listNFTs();
-getTotalSupply();
